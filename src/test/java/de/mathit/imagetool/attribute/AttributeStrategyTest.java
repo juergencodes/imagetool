@@ -1,4 +1,4 @@
-package de.mathit.imagetool.image;
+package de.mathit.imagetool.attribute;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,15 +8,15 @@ import java.time.LocalTime;
 import java.util.function.Consumer;
 import org.junit.Test;
 
-public class ImageStrategyTest {
+public class AttributeStrategyTest {
 
   private final static LocalDate DAY = LocalDate.now();
   private final static LocalTime TIME = LocalTime.now();
   private final static String INDEX = "myIndex";
 
-  private final ImageStrategy strategyDay = strategy(i -> i.registerDay(DAY));
-  private final ImageStrategy strategyTime = strategy(i -> i.registerTime(TIME));
-  private final ImageStrategy strategyIndex = strategy(i -> i.registerIndex(INDEX));
+  private final AttributeStrategy strategyDay = strategy(i -> i.registerDay(DAY));
+  private final AttributeStrategy strategyTime = strategy(i -> i.registerTime(TIME));
+  private final AttributeStrategy strategyIndex = strategy(i -> i.registerIndex(INDEX));
 
   @Test
   public void testOnlyDay() {
@@ -39,14 +39,14 @@ public class ImageStrategyTest {
   }
 
   private void assertResult(final LocalDate day, final LocalTime time, final String index,
-      final ImageStrategy... strategies) {
-    assertEquals("Wrong day.", day, ImageStrategy.day(strategies));
-    assertEquals("Wrong time.", time, ImageStrategy.time(strategies));
-    assertEquals("Wrong index.", index, ImageStrategy.index(strategies));
+      final AttributeStrategy... strategies) {
+    assertEquals("Wrong day.", day, AttributeStrategy.day(strategies));
+    assertEquals("Wrong time.", time, AttributeStrategy.time(strategies));
+    assertEquals("Wrong index.", index, AttributeStrategy.index(strategies));
   }
 
-  private ImageStrategy strategy(final Consumer<ImageStrategy> consumer) {
-    return new ImageStrategy(null) {
+  private AttributeStrategy strategy(final Consumer<AttributeStrategy> consumer) {
+    return new AttributeStrategy(null) {
       @Override
       protected void init(final File path) {
         consumer.accept(this);

@@ -1,4 +1,4 @@
-package de.mathit.imagetool.image.meta;
+package de.mathit.imagetool.attribute.meta;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -14,9 +14,9 @@ import java.util.Arrays;
 /**
  * Strategy that reads EXIF metadata from a jpg. Of course, no index can be provided.
  */
-public class JpgImageStrategy extends MetadataImageStrategySupport {
+public class JpgAttributeStrategy extends MetadataAttributeStrategySupport {
 
-  public JpgImageStrategy(final File path) {
+  public JpgAttributeStrategy(final File path) {
     super(path);
   }
 

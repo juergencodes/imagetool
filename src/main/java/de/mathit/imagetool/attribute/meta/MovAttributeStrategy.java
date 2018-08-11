@@ -1,4 +1,4 @@
-package de.mathit.imagetool.image.meta;
+package de.mathit.imagetool.attribute.meta;
 
 import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.quicktime.QuickTimeMetadataReader;
@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 /**
  * Strategy that reads metadata from a mov. Of course, no index can be provided.
  */
-public class MovImageStrategy extends MetadataImageStrategySupport {
+public class MovAttributeStrategy extends MetadataAttributeStrategySupport {
 
-  public MovImageStrategy(final File path) {
+  public MovAttributeStrategy(final File path) {
     super(path);
   }
 

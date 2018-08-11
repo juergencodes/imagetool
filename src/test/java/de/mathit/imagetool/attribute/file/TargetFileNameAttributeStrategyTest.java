@@ -1,16 +1,15 @@
-package de.mathit.imagetool.image.file;
+package de.mathit.imagetool.attribute.file;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import de.mathit.imagetool.image.ImageStrategy;
-import de.mathit.imagetool.image.file.TargetFileNameImageStrategy;
+import de.mathit.imagetool.attribute.AttributeStrategy;
 import java.io.File;
 import java.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TargetFileNameImageStrategyTest {
+public class TargetFileNameAttributeStrategyTest {
 
   @Test
   public void unknownName() {
@@ -44,17 +43,17 @@ public class TargetFileNameImageStrategyTest {
 
   private void assertResult(final String path, final LocalDate expectedDay,
       final String expectedIndex) {
-    final TargetFileNameImageStrategy strategy = new TargetFileNameImageStrategy(new File(path));
-    Assert.assertEquals("Wrong day.", expectedDay, ImageStrategy.day(strategy));
-    assertEquals("Wrong index.", expectedIndex, ImageStrategy.index(strategy));
-    assertNull("Expected no time.", ImageStrategy.time(strategy));
+    final TargetFileNameAttributeStrategy strategy = new TargetFileNameAttributeStrategy(new File(path));
+    Assert.assertEquals("Wrong day.", expectedDay, AttributeStrategy.day(strategy));
+    assertEquals("Wrong index.", expectedIndex, AttributeStrategy.index(strategy));
+    assertNull("Expected no time.", AttributeStrategy.time(strategy));
   }
 
   private void assertNoResult(final String path) {
-    final TargetFileNameImageStrategy strategy = new TargetFileNameImageStrategy(new File(path));
-    assertNull("Expected no day.", ImageStrategy.day(strategy));
-    assertNull("Expected no time.", ImageStrategy.time(strategy));
-    assertNull("Expected no index.", ImageStrategy.index(strategy));
+    final TargetFileNameAttributeStrategy strategy = new TargetFileNameAttributeStrategy(new File(path));
+    assertNull("Expected no day.", AttributeStrategy.day(strategy));
+    assertNull("Expected no time.", AttributeStrategy.time(strategy));
+    assertNull("Expected no index.", AttributeStrategy.index(strategy));
   }
 
 }

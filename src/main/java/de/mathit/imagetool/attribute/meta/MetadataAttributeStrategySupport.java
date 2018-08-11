@@ -1,8 +1,8 @@
-package de.mathit.imagetool.image.meta;
+package de.mathit.imagetool.attribute.meta;
 
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
-import de.mathit.imagetool.image.ImageStrategy;
+import de.mathit.imagetool.attribute.AttributeStrategy;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -13,9 +13,9 @@ import java.util.Iterator;
 /**
  * Support class to simplify implementations that read metadata.
  */
-abstract class MetadataImageStrategySupport extends ImageStrategy {
+abstract class MetadataAttributeStrategySupport extends AttributeStrategy {
 
-  public MetadataImageStrategySupport(final File path) {
+  public MetadataAttributeStrategySupport(final File path) {
     super(path);
   }
 

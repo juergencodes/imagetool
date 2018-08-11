@@ -1,4 +1,4 @@
-package de.mathit.imagetool.image.meta;
+package de.mathit.imagetool.attribute.meta;
 
 import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.mp4.Mp4MetadataReader;
@@ -13,9 +13,9 @@ import java.util.Map;
 /**
  * Strategy that reads metadata from a mp4. Of course, no index can be provided.
  */
-public class Mp4ImageStrategy extends MetadataImageStrategySupport {
+public class Mp4AttributeStrategy extends MetadataAttributeStrategySupport {
 
-  public Mp4ImageStrategy(final File path) {
+  public Mp4AttributeStrategy(final File path) {
     super(path);
   }
 

@@ -1,6 +1,6 @@
-package de.mathit.imagetool.image.file;
+package de.mathit.imagetool.attribute.file;
 
-import de.mathit.imagetool.image.ImageStrategy;
+import de.mathit.imagetool.attribute.AttributeStrategy;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,12 +12,12 @@ import java.util.regex.Pattern;
  * Parse the filename provided by Galaxy smartphones, because it is assumed that the date and time
  * written to the filename is in doubt more precise than the EXIF tags. Example: 20180406_102615.jpg
  */
-public class GalaxyFileNameImageStrategy extends ImageStrategy {
+public class GalaxyFileNameAttributeStrategy extends AttributeStrategy {
 
   private static final Pattern PATTERN = Pattern
       .compile("([0-9]{8})[_]([0-9]{6}).*[.].{3}");
 
-  public GalaxyFileNameImageStrategy(final File path) {
+  public GalaxyFileNameAttributeStrategy(final File path) {
     super(path);
   }
 
