@@ -18,7 +18,6 @@ public abstract class AttributeStrategy {
   private Optional<LocalDate> day = Optional.empty();
   private Optional<LocalTime> time = Optional.empty();
   private Optional<String> index = Optional.empty();
-  private boolean initialized = false;
 
   public AttributeStrategy(final File path) {
     init(path);
