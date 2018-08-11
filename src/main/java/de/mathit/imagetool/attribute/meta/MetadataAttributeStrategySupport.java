@@ -5,6 +5,7 @@ import com.drew.metadata.Directory;
 import de.mathit.imagetool.attribute.AttributeStrategy;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -15,15 +16,15 @@ import java.util.Iterator;
  */
 abstract class MetadataAttributeStrategySupport extends AttributeStrategy {
 
-  public MetadataAttributeStrategySupport(final File path) {
+  public MetadataAttributeStrategySupport(final Path path) {
     super(path);
   }
 
   @Override
-  protected void init(final File path) {
-    if (path.getPath().toLowerCase().endsWith(getExtension())) {
+  protected void init(final File file) {
+    if (file.getPath().toLowerCase().endsWith(getExtension())) {
       try {
-        final LocalDateTime creationDateTime = getCreationDateTime(path);
+        final LocalDateTime creationDateTime = getCreationDateTime(file);
         if (creationDateTime != null) {
           registerDay(creationDateTime.toLocalDate());
           registerTime(creationDateTime.toLocalTime());
@@ -36,7 +37,7 @@ abstract class MetadataAttributeStrategySupport extends AttributeStrategy {
 
   abstract String getExtension();
 
-  abstract LocalDateTime getCreationDateTime(final File path)
+  abstract LocalDateTime getCreationDateTime(final File file)
       throws IOException, ImageProcessingException;
 
   <E extends Directory> String getString(final Collection<E> directories,

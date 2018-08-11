@@ -1,6 +1,7 @@
 package de.mathit.imagetool.attribute;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -19,8 +20,8 @@ public abstract class AttributeStrategy {
   private Optional<LocalTime> time = Optional.empty();
   private Optional<String> index = Optional.empty();
 
-  public AttributeStrategy(final File path) {
-    init(path);
+  public AttributeStrategy(final Path path) {
+    init(path == null ? null : path.toFile());
   }
 
   protected void registerDay(final LocalDate day) {
@@ -35,7 +36,7 @@ public abstract class AttributeStrategy {
     this.index = Optional.of(index);
   }
 
-  protected abstract void init(final File path);
+  protected abstract void init(final File file);
 
   public static LocalDate day(final AttributeStrategy... strategies) {
     return firstProvided(s -> s.day, strategies);

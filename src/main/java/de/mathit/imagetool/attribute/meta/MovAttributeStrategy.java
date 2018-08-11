@@ -6,6 +6,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.mov.metadata.QuickTimeMetadataDirectory;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 
 /**
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
  */
 public class MovAttributeStrategy extends MetadataAttributeStrategySupport {
 
-  public MovAttributeStrategy(final File path) {
+  public MovAttributeStrategy(final Path path) {
     super(path);
   }
 
@@ -23,9 +24,9 @@ public class MovAttributeStrategy extends MetadataAttributeStrategySupport {
   }
 
   @Override
-  protected LocalDateTime getCreationDateTime(final File path)
+  protected LocalDateTime getCreationDateTime(final File file)
       throws ImageProcessingException, IOException {
-    final Metadata metadata = QuickTimeMetadataReader.readMetadata(path);
+    final Metadata metadata = QuickTimeMetadataReader.readMetadata(file);
 
     String datetime = getString(metadata.getDirectoriesOfType(QuickTimeMetadataDirectory.class),
         0x0506);

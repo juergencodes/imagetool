@@ -2,6 +2,7 @@ package de.mathit.imagetool.attribute.file;
 
 import de.mathit.imagetool.attribute.AttributeStrategy;
 import java.io.File;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,13 +16,13 @@ public class TargetFileNameAttributeStrategy extends AttributeStrategy {
   private static final Pattern PATTERN = Pattern
       .compile("(.*[ ][\\[]([0-9]{4}[-][0-9]{2}[-][0-9]{2})[\\]][ ][-][ ])(.*)([.].{3})");
 
-  public TargetFileNameAttributeStrategy(final File path) {
+  public TargetFileNameAttributeStrategy(final Path path) {
     super(path);
   }
 
   @Override
-  protected void init(final File path) {
-    final Matcher matcher = PATTERN.matcher(path.getName());
+  protected void init(final File file) {
+    final Matcher matcher = PATTERN.matcher(file.getName());
     if (matcher.matches()) {
       registerDay(LocalDate.parse(matcher.group(2)));
       registerIndex(matcher.group(3));

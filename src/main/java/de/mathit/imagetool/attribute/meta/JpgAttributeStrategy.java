@@ -8,6 +8,7 @@ import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -16,7 +17,7 @@ import java.util.Arrays;
  */
 public class JpgAttributeStrategy extends MetadataAttributeStrategySupport {
 
-  public JpgAttributeStrategy(final File path) {
+  public JpgAttributeStrategy(final Path path) {
     super(path);
   }
 
@@ -26,10 +27,10 @@ public class JpgAttributeStrategy extends MetadataAttributeStrategySupport {
   }
 
   @Override
-  protected LocalDateTime getCreationDateTime(final File path)
+  protected LocalDateTime getCreationDateTime(final File file)
       throws JpegProcessingException, IOException {
     final Metadata metadata = JpegMetadataReader
-        .readMetadata(path, Arrays.asList(new ExifReader()));
+        .readMetadata(file, Arrays.asList(new ExifReader()));
 
     // getString(metadata.getDirectoriesOfType(ExifIFD0Directory.class), ExifDirectoryBase.TAG_MODEL);
     final String datetime = getString(metadata.getDirectoriesOfType(ExifSubIFDDirectory.class),

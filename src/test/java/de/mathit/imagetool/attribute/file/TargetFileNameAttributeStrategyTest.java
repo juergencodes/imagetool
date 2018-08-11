@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import de.mathit.imagetool.attribute.AttributeStrategy;
-import java.io.File;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,14 +43,16 @@ public class TargetFileNameAttributeStrategyTest {
 
   private void assertResult(final String path, final LocalDate expectedDay,
       final String expectedIndex) {
-    final TargetFileNameAttributeStrategy strategy = new TargetFileNameAttributeStrategy(new File(path));
+    final TargetFileNameAttributeStrategy strategy = new TargetFileNameAttributeStrategy(
+        Paths.get(path));
     Assert.assertEquals("Wrong day.", expectedDay, AttributeStrategy.day(strategy));
     assertEquals("Wrong index.", expectedIndex, AttributeStrategy.index(strategy));
     assertNull("Expected no time.", AttributeStrategy.time(strategy));
   }
 
   private void assertNoResult(final String path) {
-    final TargetFileNameAttributeStrategy strategy = new TargetFileNameAttributeStrategy(new File(path));
+    final TargetFileNameAttributeStrategy strategy = new TargetFileNameAttributeStrategy(
+        Paths.get(path));
     assertNull("Expected no day.", AttributeStrategy.day(strategy));
     assertNull("Expected no time.", AttributeStrategy.time(strategy));
     assertNull("Expected no index.", AttributeStrategy.index(strategy));
