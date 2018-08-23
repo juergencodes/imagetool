@@ -1,4 +1,4 @@
-package de.mathit.imagetool.attribute;
+package de.mathit.imagetool;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -10,15 +10,12 @@ import java.time.LocalTime;
 public class Attributes {
 
   private final Path path;
-  private final LocalDate day;
-  private final LocalTime time;
-  private final String index;
+  private LocalDate day;
+  private LocalTime time;
+  private String index;
 
-  public Attributes(final Path path, final LocalDate day, final LocalTime time, final String index) {
+  public Attributes(final Path path) {
     this.path = path;
-    this.day = day;
-    this.time = time;
-    this.index = index;
   }
 
   public Path getPath() {
@@ -29,12 +26,33 @@ public class Attributes {
     return day;
   }
 
+  public void setDay(final LocalDate day) {
+    if (this.day != null) {
+      return;
+    }
+    this.day = day;
+  }
+
   public LocalTime getTime() {
     return time;
   }
 
+  public void setTime(final LocalTime time) {
+    if (this.time != null) {
+      return;
+    }
+    this.time = time;
+  }
+
   public String getIndex() {
     return index;
+  }
+
+  public void setIndex(final String index) {
+    if (this.index != null) {
+      return;
+    }
+    this.index = index;
   }
 
   @Override

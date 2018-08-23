@@ -1,33 +1,36 @@
-package de.mathit.imagetool.attribute.meta;
+package de.mathit.imagetool;
 
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
-import de.mathit.imagetool.attribute.AttributeStrategy;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.BiConsumer;
 
 /**
  * Support class to simplify implementations that read metadata.
  */
-abstract class MetadataAttributeStrategySupport extends AttributeStrategy {
+public class MetadataSupport implements BiConsumer<File, Attributes> {
 
-  public MetadataAttributeStrategySupport(final Path path) {
-    super(path);
+  private final String extension;
+  private final Extractor extractor;
+
+  public MetadataSupport(final String extension, final Extractor extractor) {
+    this.extension = extension;
+    this.extractor = extractor;
   }
 
   @Override
-  protected void init(final File file) {
-    if (file.getPath().toLowerCase().endsWith(getExtension()) && file.exists()) {
+  public void accept(final File file, final Attributes attributes) {
+    if (file.getPath().toLowerCase().endsWith(extension) && file.exists()) {
       try {
-        final LocalDateTime creationDateTime = getCreationDateTime(file);
+        final LocalDateTime creationDateTime = extractor.extract(file);
         if (creationDateTime != null) {
-          registerDay(creationDateTime.toLocalDate());
-          registerTime(creationDateTime.toLocalTime());
+          attributes.setDay(creationDateTime.toLocalDate());
+          attributes.setTime(creationDateTime.toLocalTime());
         }
       } catch (final ImageProcessingException | IOException e) {
         System.err.println("Cannot read file: " + e.getMessage());
@@ -35,12 +38,7 @@ abstract class MetadataAttributeStrategySupport extends AttributeStrategy {
     }
   }
 
-  abstract String getExtension();
-
-  abstract LocalDateTime getCreationDateTime(final File file)
-      throws IOException, ImageProcessingException;
-
-  <E extends Directory> String getString(final Collection<E> directories,
+  static <E extends Directory> String getString(final Collection<E> directories,
       final int tagType) {
     String result;
     final Iterator<E> iterator = directories.iterator();
@@ -55,9 +53,15 @@ abstract class MetadataAttributeStrategySupport extends AttributeStrategy {
     return result;
   }
 
-  LocalDateTime parse(final String datetime, final String format) {
+  static LocalDateTime parse(final String datetime, final String format) {
     return datetime == null || "".equals(datetime) ? null
         : LocalDateTime.parse(datetime, DateTimeFormatter.ofPattern(format));
+  }
+
+  public interface Extractor {
+
+    LocalDateTime extract(File file) throws IOException, ImageProcessingException;
+
   }
 
 }

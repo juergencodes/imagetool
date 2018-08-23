@@ -3,7 +3,6 @@ package de.mathit.imagetool;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 
-import de.mathit.imagetool.attribute.Attributes;
 import java.io.File;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;

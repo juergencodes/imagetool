@@ -3,7 +3,6 @@ package de.mathit.imagetool;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import de.mathit.imagetool.attribute.Attributes;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -103,7 +102,11 @@ public class RenamerTest {
   }
 
   private Attributes attributes(final LocalDate day, final LocalTime time, final String index) {
-    return new Attributes(Paths.get(".", counter++ + ".jpg"), day, time, index);
+    final Attributes attributes = new Attributes(Paths.get(".", counter++ + ".jpg"));
+    attributes.setDay(day);
+    attributes.setTime(time);
+    attributes.setIndex(index);
+    return attributes;
   }
 
   private Map<Attributes, String> renames(final Attributes... attributes) {

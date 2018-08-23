@@ -1,8 +1,6 @@
 package de.mathit.imagetool;
 
 import com.drew.imaging.ImageProcessingException;
-import de.mathit.imagetool.attribute.Attributes;
-import de.mathit.imagetool.attribute.AttributesFunction;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
