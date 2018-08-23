@@ -14,7 +14,7 @@ public class Attributes {
   private final LocalTime time;
   private final String index;
 
-  Attributes(final Path path, final LocalDate day, final LocalTime time, final String index) {
+  public Attributes(final Path path, final LocalDate day, final LocalTime time, final String index) {
     this.path = path;
     this.day = day;
     this.time = time;

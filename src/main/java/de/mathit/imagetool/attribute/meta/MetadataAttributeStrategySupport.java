@@ -22,7 +22,7 @@ abstract class MetadataAttributeStrategySupport extends AttributeStrategy {
 
   @Override
   protected void init(final File file) {
-    if (file.getPath().toLowerCase().endsWith(getExtension())) {
+    if (file.getPath().toLowerCase().endsWith(getExtension()) && file.exists()) {
       try {
         final LocalDateTime creationDateTime = getCreationDateTime(file);
         if (creationDateTime != null) {
