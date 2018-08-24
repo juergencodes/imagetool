@@ -1,12 +1,8 @@
 package de.mathit.imagetool;
 
-import static de.mathit.imagetool.MetadataSupport.getString;
-import static de.mathit.imagetool.MetadataSupport.parse;
-
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.mp4.Mp4MetadataReader;
 import com.drew.imaging.quicktime.QuickTimeMetadataReader;
-import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
@@ -18,10 +14,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -69,61 +63,25 @@ public class AttributesFunction implements Function<Path, Attributes> {
     });
 
     // JPG Metadata
-    strategies.add(new MetadataSupport("jpg", f -> {
-      final Metadata metadata = JpegMetadataReader
-          .readMetadata(f, Arrays.asList(new ExifReader()));
-
-      // getString(metadata.getDirectoriesOfType(ExifIFD0Directory.class), ExifDirectoryBase.TAG_MODEL);
-      final String datetime = getString(metadata.getDirectoriesOfType(ExifSubIFDDirectory.class),
-          ExifDirectoryBase.TAG_DATETIME_ORIGINAL);
-      return parse(datetime, "yyyy:MM:dd HH:mm:ss");
-    }));
+    strategies.add(new MetadataSupport("jpg", "yyyy:MM:dd HH:mm:ss", f -> JpegMetadataReader
+        .readMetadata(f, Arrays.asList(new ExifReader()))
+        .getDirectoriesOfType(ExifSubIFDDirectory.class)
+        .stream().findFirst().map(d -> d.getString(ExifDirectoryBase.TAG_DATETIME_ORIGINAL))
+        .orElse(null)));
 
     // MOV Metadata
-    strategies.add(new MetadataSupport("mov", f -> {
-      final Metadata metadata = QuickTimeMetadataReader.readMetadata(f);
-
-      String datetime = getString(metadata.getDirectoriesOfType(QuickTimeMetadataDirectory.class),
-          0x0506);
-      if (datetime != null) {
-        if (datetime.length() == 24) {
-          datetime = datetime.substring(0, 19);
-        }
-        return parse(datetime, "yyyy-MM-dd'T'HH:mm:ss");
-      }
-      return null;
-    }));
+    strategies.add(new MetadataSupport("mov", "yyyy-MM-dd'T'HH:mm:ss",
+        f -> QuickTimeMetadataReader.readMetadata(f)
+            .getDirectoriesOfType(QuickTimeMetadataDirectory.class).stream()
+            .findFirst().map(d -> d.getString(0x0506))
+            .map(d -> d.length() == 24 ? d.substring(0, 19) : d).orElse(null)));
 
     // MP4 Metadata
-    strategies.add(new MetadataSupport("mp4", f -> {
-      final Metadata metadata = Mp4MetadataReader.readMetadata(f);
-      final String datetime = getString(metadata.getDirectoriesOfType(Mp4Directory.class),
-          Mp4Directory.TAG_CREATION_TIME);
-      if (datetime != null) {
-        final String[] tokens = datetime.split(" ");
-        final Map<String, String> monthMap = new HashMap<>();
-        monthMap.put("Jan", "01");
-        monthMap.put("Feb", "02");
-        monthMap.put("Mar", "03");
-        monthMap.put("Apr", "04");
-        monthMap.put("May", "05");
-        monthMap.put("Jun", "06");
-        monthMap.put("Jul", "07");
-        monthMap.put("Aug", "08");
-        monthMap.put("Sep", "09");
-        monthMap.put("Oct", "10");
-        monthMap.put("Nov", "11");
-        monthMap.put("Dev", "12");
-
-        if (!monthMap.containsKey(tokens[1])) {
-          throw new IllegalStateException("No entry yet for month '" + tokens[1] + "'");
-        }
-        final String month = monthMap.get(tokens[1]);
-        final String datetimeModified = tokens[5] + ":" + month + ":" + tokens[2] + " " + tokens[3];
-        return parse(datetimeModified, "yyyy:MM:dd HH:mm:ss");
-      }
-      return null;
-    }));
+    strategies.add(
+        new MetadataSupport("mp4", "yyyy:MMM:dd HH:mm:ss", f -> Mp4MetadataReader.readMetadata(f)
+            .getDirectoriesOfType(Mp4Directory.class).stream().findFirst()
+            .map(d -> d.getString(Mp4Directory.TAG_CREATION_TIME)).map(d -> d.split(" "))
+            .map(t -> t[5] + ":" + t[1] + ":" + t[2] + " " + t[3]).orElse(null)));
   }
 
   @Override
