@@ -1,5 +1,8 @@
 package de.mathit.imagetool;
 
+import static java.time.format.DateTimeFormatter.ofPattern;
+
+import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.mp4.Mp4MetadataReader;
 import com.drew.imaging.quicktime.QuickTimeMetadataReader;
@@ -9,10 +12,11 @@ import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.mov.metadata.QuickTimeMetadataDirectory;
 import com.drew.metadata.mp4.Mp4Directory;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,31 +61,44 @@ public class AttributesFunction implements Function<Path, Attributes> {
     strategies.add((f, a) -> {
       final Matcher matcher = PATTERN_GALAXY.matcher(f.getName());
       if (matcher.matches()) {
-        a.setDay(LocalDate.parse(matcher.group(1), DateTimeFormatter.ofPattern("yyyyMMdd")));
-        a.setTime(LocalTime.parse(matcher.group(2), DateTimeFormatter.ofPattern("HHmmss")));
+        a.setDay(LocalDate.parse(matcher.group(1), ofPattern("yyyyMMdd")));
+        a.setTime(LocalTime.parse(matcher.group(2), ofPattern("HHmmss")));
       }
     });
 
     // JPG Metadata
-    strategies.add(new MetadataSupport("jpg", "yyyy:MM:dd HH:mm:ss", f -> JpegMetadataReader
+    strategies.add(metadata("jpg", (f, a) -> JpegMetadataReader
         .readMetadata(f, Arrays.asList(new ExifReader()))
         .getDirectoriesOfType(ExifSubIFDDirectory.class)
         .stream().findFirst().map(d -> d.getString(ExifDirectoryBase.TAG_DATETIME_ORIGINAL))
-        .orElse(null)));
+        .map(d -> LocalDateTime.parse(d, ofPattern("yyyy:MM:dd HH:mm:ss")))
+        .ifPresent(a)));
 
     // MOV Metadata
-    strategies.add(new MetadataSupport("mov", "yyyy-MM-dd'T'HH:mm:ss",
-        f -> QuickTimeMetadataReader.readMetadata(f)
-            .getDirectoriesOfType(QuickTimeMetadataDirectory.class).stream()
-            .findFirst().map(d -> d.getString(0x0506))
-            .map(d -> d.length() == 24 ? d.substring(0, 19) : d).orElse(null)));
+    strategies.add(metadata("mov", (f, a) -> QuickTimeMetadataReader.readMetadata(f)
+        .getDirectoriesOfType(QuickTimeMetadataDirectory.class).stream()
+        .findFirst().map(d -> d.getString(0x0506))
+        .map(d -> d.length() == 24 ? d.substring(0, 19) : d)
+        .map(d -> LocalDateTime.parse(d, ofPattern("yyyy-MM-dd'T'HH:mm:ss"))).ifPresent(a)));
 
     // MP4 Metadata
-    strategies.add(
-        new MetadataSupport("mp4", "yyyy:MMM:dd HH:mm:ss", f -> Mp4MetadataReader.readMetadata(f)
-            .getDirectoriesOfType(Mp4Directory.class).stream().findFirst()
-            .map(d -> d.getString(Mp4Directory.TAG_CREATION_TIME)).map(d -> d.split(" "))
-            .map(t -> t[5] + ":" + t[1] + ":" + t[2] + " " + t[3]).orElse(null)));
+    strategies.add(metadata("mp4", (f, a) -> Mp4MetadataReader.readMetadata(f)
+        .getDirectoriesOfType(Mp4Directory.class).stream().findFirst()
+        .map(d -> d.getString(Mp4Directory.TAG_CREATION_TIME)).map(d -> d.split(" "))
+        .map(t -> t[5] + ":" + t[1] + ":" + t[2] + " " + t[3])
+        .map(d -> LocalDateTime.parse(d, ofPattern("yyyy:MMM:dd HH:mm:ss"))).ifPresent(a)));
+  }
+
+  private BiConsumer<File, Attributes> metadata(final String extension, final Extractor extractor) {
+    return (f, a) -> {
+      if (f.getPath().toLowerCase().endsWith(extension) && f.exists()) {
+        try {
+          extractor.extract(f, a);
+        } catch (final ImageProcessingException | IOException e) {
+          System.err.println("Cannot read file: " + e.getMessage());
+        }
+      }
+    };
   }
 
   @Override
@@ -92,6 +109,12 @@ public class AttributesFunction implements Function<Path, Attributes> {
       consumer.accept(file, attributes);
     }
     return attributes;
+  }
+
+  private interface Extractor {
+
+    void extract(File file, Attributes attributes) throws IOException, ImageProcessingException;
+
   }
 
 }

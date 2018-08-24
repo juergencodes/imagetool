@@ -2,12 +2,14 @@ package de.mathit.imagetool;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.function.Consumer;
 
 /**
  * Collects attributes of an image.
  */
-public class Attributes {
+public class Attributes implements Consumer<LocalDateTime> {
 
   private final Path path;
   private LocalDate day;
@@ -53,6 +55,12 @@ public class Attributes {
       return;
     }
     this.index = index;
+  }
+
+  @Override
+  public void accept(final LocalDateTime creationDateTime) {
+    setDay(creationDateTime.toLocalDate());
+    setTime(creationDateTime.toLocalTime());
   }
 
   @Override
