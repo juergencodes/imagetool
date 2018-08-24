@@ -20,6 +20,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -89,11 +90,12 @@ public class AttributesFunction implements Function<Path, Attributes> {
         .map(d -> LocalDateTime.parse(d, ofPattern("yyyy:MMM:dd HH:mm:ss"))).ifPresent(a)));
   }
 
-  private BiConsumer<File, Attributes> metadata(final String extension, final Extractor extractor) {
+  private BiConsumer<File, Attributes> metadata(final String extension,
+      final MetadataBiConsumer consumer) {
     return (f, a) -> {
       if (f.getPath().toLowerCase().endsWith(extension) && f.exists()) {
         try {
-          extractor.extract(f, a);
+          consumer.accept(f, a);
         } catch (final ImageProcessingException | IOException e) {
           System.err.println("Cannot read file: " + e.getMessage());
         }
@@ -104,16 +106,14 @@ public class AttributesFunction implements Function<Path, Attributes> {
   @Override
   public Attributes apply(final Path path) {
     final Attributes attributes = new Attributes(path);
-    final File file = path == null ? null : path.toFile();
-    for (final BiConsumer<File, Attributes> consumer : strategies) {
-      consumer.accept(file, attributes);
-    }
+    Optional.of(path).map(Path::toFile)
+        .ifPresent(f -> strategies.stream().forEach(s -> s.accept(f, attributes)));
     return attributes;
   }
 
-  private interface Extractor {
+  private interface MetadataBiConsumer {
 
-    void extract(File file, Attributes attributes) throws IOException, ImageProcessingException;
+    void accept(File file, Attributes attributes) throws IOException, ImageProcessingException;
 
   }
 
