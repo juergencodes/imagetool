@@ -1,6 +1,6 @@
 package de.mathit.imagetool;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -11,17 +11,17 @@ import java.util.function.Consumer;
  */
 public class Attributes implements Consumer<LocalDateTime> {
 
-  private final Path path;
+  private final File file;
   private LocalDate day;
   private LocalTime time;
   private String index;
 
-  public Attributes(final Path path) {
-    this.path = path;
+  public Attributes(final File file) {
+    this.file = file;
   }
 
-  public Path getPath() {
-    return path;
+  public File getFile() {
+    return file;
   }
 
   public LocalDate getDay() {
@@ -65,7 +65,7 @@ public class Attributes implements Consumer<LocalDateTime> {
 
   @Override
   public String toString() {
-    return "Attributes{" + "path=" + path + ", day=" + day + ", time=" + time +
+    return "Attributes{" + "file=" + file + ", day=" + day + ", time=" + time +
         ", index='" + index + '\'' + '}';
   }
 

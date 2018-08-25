@@ -3,13 +3,14 @@ package de.mathit.imagetool;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import de.mathit.imagetool.Attributes;
-import de.mathit.imagetool.AttributesFunction;
-import java.nio.file.Paths;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import org.junit.Test;
 
+/**
+ * Test {@link AttributesFunction}.
+ */
 public class AttributesFunctionTest {
 
   @Test
@@ -19,7 +20,7 @@ public class AttributesFunctionTest {
 
   @Test
   public void exif() {
-    assertDayAndTime("target/test-classes/exif/image1.jpg", LocalDate.of(2016, 5, 29),
+    assertDayAndTime("target/test-classes/images/album1/image1.jpg", LocalDate.of(2016, 5, 29),
         LocalTime.of(17, 3, 48));
   }
 
@@ -87,7 +88,8 @@ public class AttributesFunctionTest {
 
   @Test
   public void targetOverrulesExif() {
-    assertDayAndTimeAndIndex("target/test-classes/exif/My Album [2015-04-25] - 007.jpg",
+    assertDayAndTimeAndIndex(
+        "target/test-classes/images/album2 [2015-04-25]/My Album [2015-04-25] - 007.jpg",
         LocalDate.of(2015, 4, 25),
         LocalTime.of(17, 3, 48), "007");
   }
@@ -95,7 +97,7 @@ public class AttributesFunctionTest {
   private void assertDayAndTimeAndIndex(final String path, final LocalDate expectedDay,
       final LocalTime expectedTime,
       final String expectedIndex) {
-    final Attributes attributes = new AttributesFunction().apply(Paths.get(path));
+    final Attributes attributes = new AttributesFunction().apply(new File(path));
     assertEquals("Wrong day.", expectedDay, attributes.getDay());
     assertEquals("Wrong time.", expectedTime, attributes.getTime());
     assertEquals("Wrong index.", expectedIndex, attributes.getIndex());
@@ -103,7 +105,7 @@ public class AttributesFunctionTest {
 
   private void assertDayAndIndex(final String path, final LocalDate expectedDay,
       final String expectedIndex) {
-    final Attributes attributes = new AttributesFunction().apply(Paths.get(path));
+    final Attributes attributes = new AttributesFunction().apply(new File(path));
     assertEquals("Wrong day.", expectedDay, attributes.getDay());
     assertNull("Expected no time.", attributes.getTime());
     assertEquals("Wrong index.", expectedIndex, attributes.getIndex());
@@ -111,14 +113,14 @@ public class AttributesFunctionTest {
 
   private void assertDayAndTime(final String path, final LocalDate expectedDay,
       final LocalTime expectedTime) {
-    final Attributes attributes = new AttributesFunction().apply(Paths.get(path));
+    final Attributes attributes = new AttributesFunction().apply(new File(path));
     assertEquals("Wrong day.", expectedDay, attributes.getDay());
     assertEquals("Wrong time.", expectedTime, attributes.getTime());
     assertNull("Expected no index.", attributes.getIndex());
   }
 
   private void assertNoResult(final String path) {
-    final Attributes attributes = new AttributesFunction().apply(Paths.get(path));
+    final Attributes attributes = new AttributesFunction().apply(new File(path));
     assertNull("Expected no day.", attributes.getDay());
     assertNull("Expected no time.", attributes.getTime());
     assertNull("Expected no index.", attributes.getIndex());

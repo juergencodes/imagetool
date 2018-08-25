@@ -36,16 +36,16 @@ public class Renamer implements Consumer<Stream<Attributes>> {
                       && a.getTime().compareTo(b.getTime()) != 0) {
                     return a.getTime().compareTo(b.getTime());
                   } else {
-                    return a.getPath().compareTo(b.getPath());
+                    return a.getFile().compareTo(b.getFile());
                   }
                 })))).values()
         .stream().forEach(attr -> {
       int index = 1;
       for (final Attributes a : attr) {
-        final String s = a.getPath().toString();
+        final String s = a.getFile().toString();
         final String name = String.format("%s [%s] - %03d%s", prefix, a.getDay(), index++,
             s.substring(s.lastIndexOf('.')).toLowerCase());
-        final File from = a.getPath().toFile();
+        final File from = a.getFile();
         renameCommand.accept(from, new File(from.getParentFile(), name));
       }
     });

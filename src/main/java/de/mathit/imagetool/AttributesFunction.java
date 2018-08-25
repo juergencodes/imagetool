@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 /**
  * Get the attributes of an image given by path.
  */
-public class AttributesFunction implements Function<Path, Attributes> {
+public class AttributesFunction implements Function<File, Attributes> {
 
   /**
    * Probably the most accurate strategy for index and day, because it takes day and index from the
@@ -104,9 +104,9 @@ public class AttributesFunction implements Function<Path, Attributes> {
   }
 
   @Override
-  public Attributes apply(final Path path) {
-    final Attributes attributes = new Attributes(path);
-    Optional.of(path).map(Path::toFile)
+  public Attributes apply(final File file) {
+    final Attributes attributes = new Attributes(file);
+    Optional.of(file)
         .ifPresent(f -> strategies.stream().forEach(s -> s.accept(f, attributes)));
     return attributes;
   }

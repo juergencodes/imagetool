@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -18,7 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test {@link Renamer}
+ * Test {@link Renamer}.
  */
 public class RenamerTest {
 
@@ -102,7 +101,7 @@ public class RenamerTest {
   }
 
   private Attributes attributes(final LocalDate day, final LocalTime time, final String index) {
-    final Attributes attributes = new Attributes(Paths.get(".", counter++ + ".jpg"));
+    final Attributes attributes = new Attributes(new File("." + counter++ + ".jpg"));
     attributes.setDay(day);
     attributes.setTime(time);
     attributes.setIndex(index);
@@ -112,7 +111,7 @@ public class RenamerTest {
   private Map<Attributes, String> renames(final Attributes... attributes) {
     final List<Attributes> allAttributes = Arrays.asList(attributes);
     final Map<File, Attributes> lookup = allAttributes.stream()
-        .collect(Collectors.toMap(a -> a.getPath().toFile(), a -> a));
+        .collect(Collectors.toMap(a -> a.getFile(), a -> a));
 
     final Map<Attributes, String> renames = new HashMap<>();
     new Renamer(ALBUM, (s, t) -> renames.put(lookup.get(s), t.getName()))
