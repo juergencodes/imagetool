@@ -4,6 +4,9 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toCollection;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -39,11 +42,13 @@ public class Renamer implements Consumer<Stream<Attributes>> {
                     return a.getFile().compareTo(b.getFile());
                   }
                 })))).values()
-        .stream().forEach(attr -> {
-      int index = 1;
-      for (final Attributes a : attr) {
+        .stream().forEachOrdered(attr -> {
+      final List<Attributes> reversed = new LinkedList<>(attr);
+      Collections.reverse(reversed);
+      int index = reversed.size();
+      for (final Attributes a : reversed) {
         final String s = a.getFile().toString();
-        final String name = String.format("%s [%s] - %03d%s", prefix, a.getDay(), index++,
+        final String name = String.format("%s [%s] - %03d%s", prefix, a.getDay(), index--,
             s.substring(s.lastIndexOf('.')).toLowerCase());
         final File from = a.getFile();
         renameCommand.accept(from, new File(from.getParentFile(), name));
