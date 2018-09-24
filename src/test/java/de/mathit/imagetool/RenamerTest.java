@@ -74,6 +74,26 @@ public class RenamerTest {
   }
 
   @Test
+  public void severalRenamesWithExistingButNonStandardIndexes() {
+    final Attributes attributes1 = attributes(DAY, TIME, "001");
+    final Attributes attributes2 = attributes(DAY, TIME, "002");
+    final Attributes attributes3 = attributes(DAY, TIME, "003");
+    final Attributes attributes4 = attributes(DAY, TIME, "003a", "mts");
+    final Attributes attributes5 = attributes(DAY, TIME, "003b", "mts");
+    final Attributes attributes6 = attributes(DAY, TIME, "004");
+
+    final Map<Attributes, String> renames = renames(attributes1, attributes2, attributes3,
+        attributes4, attributes5, attributes6);
+    assertNumberOfRenames(6, renames);
+    assertRenameTo(renames, attributes1, "MyAlbum [2018-08-15] - 001.jpg");
+    assertRenameTo(renames, attributes2, "MyAlbum [2018-08-15] - 002.jpg");
+    assertRenameTo(renames, attributes3, "MyAlbum [2018-08-15] - 003.jpg");
+    assertRenameTo(renames, attributes4, "MyAlbum [2018-08-15] - 004.mts");
+    assertRenameTo(renames, attributes5, "MyAlbum [2018-08-15] - 005.mts");
+    assertRenameTo(renames, attributes6, "MyAlbum [2018-08-15] - 006.jpg");
+  }
+
+  @Test
   public void sortInByTime() {
     final Attributes attributes1 = attributes(DAY, TIME, "001");
     final Attributes attributes2 = attributes(DAY, TIME, null);
@@ -101,7 +121,12 @@ public class RenamerTest {
   }
 
   private Attributes attributes(final LocalDate day, final LocalTime time, final String index) {
-    final Attributes attributes = new Attributes(new File("." + counter++ + ".jpg"));
+    return attributes(day, time, index, "jpg");
+  }
+
+  private Attributes attributes(final LocalDate day, final LocalTime time, final String index,
+      final String extension) {
+    final Attributes attributes = new Attributes(new File("." + counter++ + "." + extension));
     attributes.setDay(day);
     attributes.setTime(time);
     attributes.setIndex(index);

@@ -46,7 +46,7 @@ public class Album {
   public Stream<File> getFiles() {
     try {
       return Files.walk(Paths.get(directory.getAbsolutePath())).map(Path::toFile).filter(f -> Arrays
-          .asList("jpg", "jpeg", "mov", "mp4")
+          .asList("jpg", "jpeg", "mov", "mp4", "mts")
           .contains(f.getPath().substring(f.getPath().lastIndexOf('.') + 1).toLowerCase()));
     } catch (final IOException e) {
       return Stream.empty();

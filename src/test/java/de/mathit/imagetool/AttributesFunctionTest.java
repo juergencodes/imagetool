@@ -94,6 +94,11 @@ public class AttributesFunctionTest {
         LocalTime.of(17, 3, 48), "007");
   }
 
+  @Test
+  public void targetNameForMTSFile() {
+    assertDayAndIndex("My Video [2018-05-28] - 039a.mts", LocalDate.of(2018, 5, 28), "039a");
+  }
+
   private void assertDayAndTimeAndIndex(final String path, final LocalDate expectedDay,
       final LocalTime expectedTime,
       final String expectedIndex) {
