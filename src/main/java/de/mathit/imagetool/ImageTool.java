@@ -27,7 +27,6 @@ public class ImageTool {
 
 		if (!album.hasDateInPath()) {
 			final Set<LocalDate> dates = attributes.stream().map(a -> a.getDay()).filter(d -> d != null).collect(Collectors.toSet());
-			System.out.println(dates);
 			if (dates.size() == 1) {
 				album.getDirectory().renameTo(new File(String.format("%s [%s]", album.getDirectory().getAbsolutePath(), dates.iterator().next())));
 			}
