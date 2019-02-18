@@ -18,6 +18,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -87,7 +88,7 @@ public class AttributesFunction implements Function<File, Attributes> {
 				.getDirectoriesOfType(Mp4Directory.class).stream().findFirst()
 				.map(d -> d.getString(Mp4Directory.TAG_CREATION_TIME)).map(d -> d.split(" "))
 				.map(t -> t[5] + ":" + t[1] + ":" + t[2] + " " + t[3])
-				.map(d -> LocalDateTime.parse(d, ofPattern("yyyy:MMM:dd HH:mm:ss"))).ifPresent(a)));
+				.map(d -> LocalDateTime.parse(d, ofPattern("yyyy:MMM:dd HH:mm:ss", Locale.US))).ifPresent(a)));
 	}
 
 	private BiConsumer<File, Attributes> metadata(final String extension,
