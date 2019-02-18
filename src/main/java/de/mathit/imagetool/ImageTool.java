@@ -1,14 +1,15 @@
 package de.mathit.imagetool;
 
-import com.drew.imaging.ImageProcessingException;
-
 import java.io.File;
-import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 public class ImageTool {
 
-	public static void main(final String[] args) throws ImageProcessingException, IOException {
+	public static void main(final String[] args) {
 		if (args.length == 0) {
 			throw new IllegalArgumentException("Expected a path as first parameter.");
 		}
@@ -20,9 +21,18 @@ public class ImageTool {
 
 		final String path = args[0];
 		final Album album = new Album(path);
+		final List<Attributes> attributes = album.getFiles().map(new AttributesFunction()).collect(Collectors.toList());
 
-		new Renamer(album.getName(), command)
-				.accept(album.getFiles().map(new AttributesFunction()));
+		new Renamer(album.getName(), command).accept(attributes.stream());
+
+		if (!album.hasDateInPath()) {
+			final Set<LocalDate> dates = attributes.stream().map(a -> a.getDay()).filter(d -> d != null).collect(Collectors.toSet());
+			System.out.println(dates);
+			if (dates.size() == 1) {
+				album.getDirectory().renameTo(new File(album.getDirectory().getAbsolutePath() + dates.iterator().next()));
+			}
+		}
+
 	}
 
 	private static BiConsumer<File, File> printer() {

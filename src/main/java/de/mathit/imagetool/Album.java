@@ -20,6 +20,7 @@ public class Album {
 
 	private final File directory;
 	private final String name;
+	private final boolean dateInPath;
 
 	public Album(final String path) {
 		directory = new File(path);
@@ -34,13 +35,23 @@ public class Album {
 		final Matcher matcher = PATTERN.matcher(lastElement);
 		if (matcher.matches()) {
 			name = matcher.group(1);
+			dateInPath = true;
 		} else {
 			name = lastElement;
+			dateInPath = false;
 		}
+	}
+
+	public File getDirectory() {
+		return directory;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public boolean hasDateInPath() {
+		return dateInPath;
 	}
 
 	public Stream<File> getFiles() {
